@@ -31,8 +31,8 @@ public record UserProfileResponse(
                 endUser.getProfilePictureUrl(),
                 endUser.getShortDescription(),
                 endUser.getCreateDate().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")),
-                endUser.getModifyDate().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")),
-                endUser.getLastActive().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")),
+                endUser.getModifyDate() != null ? endUser.getModifyDate().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")) : null,
+                endUser.getLastActive() != null ? endUser.getLastActive().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")) : null,
                 endUser.getFollowers().size(),
                 endUser.getFollowings().size()
         );

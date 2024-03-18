@@ -145,7 +145,7 @@ public class EndUser {
         this.nickname = myProfileEditRequest.nickname();
         this.shortDescription = myProfileEditRequest.shortDescription();
         this.profilePictureUrl = myProfileEditRequest.profilePictureUrl();
-        this.selectedSpace = !myProfileEditRequest.selectedSpaceId().equals(null) &&
+        this.selectedSpace = myProfileEditRequest.selectedSpaceId() != null &&
                 !myProfileEditRequest.selectedSpaceId().equals("") ? myProfileEditRequest.selectedSpaceId() : null;
         this.useCaptureRoom = myProfileEditRequest.useCaptureRoom();
         this.useFeedInfo = myProfileEditRequest.useFeedInfo();

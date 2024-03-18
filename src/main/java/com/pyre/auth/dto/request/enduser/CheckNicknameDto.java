@@ -7,10 +7,10 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record CheckNicknameDto(
-        @Size(min = 5, max = 12, message = "닉네임은 5 ~ 12자 이여야 합니다!")
+        @Size(min = 2, max = 20, message = "닉네임은 2 ~ 20자 이여야 합니다! 특수 기호는-와_만 사용할 수 있습니다.")
         @NotBlank
-        @Pattern(regexp = "^[A-Za-z0-9]{5,12}$")
-        @Schema(description = "중복 확인할 닉네임", example = "nickname2")
+        @Pattern(regexp = "^[A-Za-z0-9ㄱ-ㅎ가-힣-_]{2,20}$",message = "닉네임은 2 ~ 20자 이여야 합니다! 특수 기호는-와_만 사용할 수 있습니다.")
+        @Schema(description = "닉네임", example = "nickname2")
         String nickname
 ) {
 }

@@ -38,7 +38,7 @@ public record MyProfileResponse(
                 endUser.getShortDescription(),
                 endUser.getCreateDate().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")),
                 endUser.getModifyDate() != null ? endUser.getModifyDate().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")) : null,
-                endUser.getLastActive().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")),
+                endUser.getLastActive() != null ? endUser.getLastActive().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")) : null,
                 endUser.getSocialType(),
                 endUser.getFollowers().size(),
                 endUser.getFollowings().size()

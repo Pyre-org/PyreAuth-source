@@ -347,6 +347,8 @@ public class EndUserServiceImpl implements EndUserService {
         }
         if (spaceId != null) {
             gotEndUser.updateSelectedCapture(UUID.fromString(spaceId), channelId);
+        } else {
+            gotEndUser.updateSelectedCapture(null, null);
         }
         gotEndUser.updateUserProfile(myProfileEditRequest);
         return "성공적으로 프로필이 수정 되었습니다.";
