@@ -5,7 +5,9 @@
 #### [Github 조직](https://github.com/Pyre-org)
 
 # PyreAuth
+## 프로젝트 구조
 <img src="https://cdn.discordapp.com/attachments/393025698907947009/1219254633839722546/image.png?ex=660aa25d&is=65f82d5d&hm=5a8e8dabb5bff05518f90b40ab7d84f57a7e55faf7f71f7053fb5bc4d485afcd&" alt="drawing" width="600"/>
+
 ## 기술 스택
 - Java 21
 - Spring Boot (3.2.2)
