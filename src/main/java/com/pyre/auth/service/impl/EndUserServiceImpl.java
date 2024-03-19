@@ -262,9 +262,8 @@ public class EndUserServiceImpl implements EndUserService {
         String aToken = jwtTokenProvider.createToken(email, endUser.getRole(), endUser.getId());
 
         endUser.updateLastActive(LocalDateTime.now());
-        String refreshToken = jwtTokenProvider.CreateRefreshToken(endUser.getEmail());
-        redisUtilService.setDataExpire(endUser.getEmail(), refreshToken, refreshTime);
-        addTokenAndCookieToResponse(response, refreshToken, AwsDomain);
+
+        addTokenAndCookieToResponse(response, refresh, AwsDomain);
         JwtDto jwtDto = new JwtDto(aToken);
         this.endUserRepository.save(endUser);
         log.info("refreshPage 완료 email: {}, ip address: {}", email, ip);
