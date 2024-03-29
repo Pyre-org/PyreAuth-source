@@ -274,7 +274,7 @@ public class EndUserServiceImpl implements EndUserService {
         newCookie.setDomain(AwsDomain);
 
         response.addCookie(newCookie);
-        addTokenAndCookieToResponse(response, refresh, AwsDomain);
+        
         JwtDto jwtDto = new JwtDto(aToken);
         this.endUserRepository.save(endUser);
         log.info("refreshPage 완료 email: {}, ip address: {}", email, ip);
