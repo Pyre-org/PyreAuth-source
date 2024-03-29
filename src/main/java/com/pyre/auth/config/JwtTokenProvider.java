@@ -1,6 +1,7 @@
 package com.pyre.auth.config;
 
 import com.pyre.auth.enumeration.UserRoleEnum;
+import com.pyre.auth.repository.EndUserRepository;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
+    private final EndUserRepository endUserRepository;
     private final static String ROLE = "role";
     private final static String ID = "id";
 
@@ -43,18 +45,33 @@ public class JwtTokenProvider {
             long tokenTime,
             @Value("${jwt.time.refresh}")
             long refreshTime,
-            UserDetailsService userDetailsService
+            UserDetailsService userDetailsService,
+            EndUserRepository endUserRepository
     ) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
         this.tokenTime = tokenTime;
         this.refreshTime = refreshTime;
         this.userDetailsService = userDetailsService;
+        this.endUserRepository = endUserRepository;
     }
 
     public String createToken(String email, UserRoleEnum role, UUID id) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put(ROLE,role.getKey());
         claims.put(ID, id.toString());
+        Date now =new Date();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + tokenTime))
+                .signWith(SignatureAlgorithm.HS256,secretKey)
+                .compact();
+    }
+    public String createAccessToken(String email) {
+        Claims claims = Jwts.claims().setSubject(email);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        claims.put(ROLE,endUserRepository.findByEmail(email).get().getRole().getKey());
+        claims.put(ID, endUserRepository.findByEmail(email).get().getId().toString());
         Date now =new Date();
         return Jwts.builder()
                 .setClaims(claims)

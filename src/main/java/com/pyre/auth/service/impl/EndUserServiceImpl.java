@@ -244,7 +244,6 @@ public class EndUserServiceImpl implements EndUserService {
     @Transactional
     @Override
     public JwtDto refreshPage(String refresh_token, HttpServletResponse response, String ip) {
-
         if (refresh_token == null) {
             throw new AuthenticationFailException("유저 정보를 찾을 수 없음. 로그인을 다시 하시기 바랍니다.");
         }
@@ -257,7 +256,6 @@ public class EndUserServiceImpl implements EndUserService {
         if (!refresh.equals(refresh_token)) {
             throw new AuthenticationFailException("유효하지 않은 토큰");
         }
-
         EndUser endUser = this.endUserRepository.findByEmail(email).get();
         String aToken = jwtTokenProvider.createToken(email, endUser.getRole(), endUser.getId());
 
@@ -274,9 +272,7 @@ public class EndUserServiceImpl implements EndUserService {
         newCookie.setDomain(AwsDomain);
 
         response.addCookie(newCookie);
-        
         JwtDto jwtDto = new JwtDto(aToken);
-        this.endUserRepository.save(endUser);
         log.info("refreshPage 완료 email: {}, ip address: {}", email, ip);
         return jwtDto;
 

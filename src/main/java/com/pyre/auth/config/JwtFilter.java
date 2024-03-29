@@ -42,7 +42,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken(request);
+        log.error("t-1");
         if (token != null) {
+            log.error("t0");
             if (jwtTokenProvider.validateToken(token, request)) {
                 try {
                     Authentication authentication = jwtTokenProvider.getAuthentication(token);
@@ -59,27 +61,22 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             } else {
                 Cookie cookie = getCookie(request, "refresh_token");
-                final String refreshToken = cookie == null ? null : cookie.getValue();
+                String refreshToken = cookie == null ? null : cookie.getValue();
+
                 if (refreshToken != null) {
+                    log.error(refreshToken);
                     if (jwtTokenProvider.validateToken(refreshToken, request)) {
-                        if (redisUtilService.getData(refreshToken) == null) {
+                        String refreshEmail = jwtTokenProvider.getEmail(refreshToken);
+                        if (redisUtilService.getData(refreshEmail) == null) {
                             jwtExceptionHandler(response, "Refresh_Token Expired", HttpStatus.UNAUTHORIZED);
                             return;
                         }
-                        if (!redisUtilService.getData(refreshToken).equals(refreshToken)) {
+                        if (!redisUtilService.getData(refreshEmail).equals(refreshToken)) {
                             jwtExceptionHandler(response, "Refresh_Token is not correct", HttpStatus.UNAUTHORIZED);
                             return;
                         }
-                        String refreshEmail = jwtTokenProvider.getEmail(refreshToken);
-                        String accessEmail = jwtTokenProvider.getEmail(token);
-                        if (!refreshEmail.equals(accessEmail)) {
-                            jwtExceptionHandler(response, "Refresh_Token is not correct", HttpStatus.UNAUTHORIZED);
-                            return;
-                        }
-                        UserRoleEnum role = jwtTokenProvider.getRole(token);
-                        UUID id = jwtTokenProvider.getId(token);
-                        String newAccessToken = jwtTokenProvider.createToken(refreshEmail, role, id);
-
+                        String newAccessToken = jwtTokenProvider.createAccessToken(refreshEmail);
+                        response.addHeader("Authorization", newAccessToken);
                         Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
