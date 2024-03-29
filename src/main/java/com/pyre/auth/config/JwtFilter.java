@@ -79,18 +79,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         UserRoleEnum role = jwtTokenProvider.getRole(token);
                         UUID id = jwtTokenProvider.getId(token);
                         String newAccessToken = jwtTokenProvider.createToken(refreshEmail, role, id);
-                        String newRefreshToken = jwtTokenProvider.CreateRefreshToken(refreshEmail);
-                        this.redisUtilService.setDataExpire(refreshEmail, newRefreshToken, refreshTime);
-                        response.setHeader("Authorization", newAccessToken);
-                        Cookie newCookie = new Cookie("refresh_token", newRefreshToken);
-                        newCookie.setPath("/");
-                        newCookie.setMaxAge(60 * 60 * 24 * 14); // 14 day
-                        newCookie.setSecure(true);  // 추후 https 구현시 true로
-                        newCookie.setAttribute("SameSite", "None"); // 추후 같은 사이트에서만 실행할 수 있게 변경
-                        newCookie.setHttpOnly(true);
-                        newCookie.setDomain(awsDomain);
 
-                        response.addCookie(newCookie);
                         Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }

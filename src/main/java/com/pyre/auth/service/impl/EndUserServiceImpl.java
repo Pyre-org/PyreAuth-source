@@ -262,7 +262,18 @@ public class EndUserServiceImpl implements EndUserService {
         String aToken = jwtTokenProvider.createToken(email, endUser.getRole(), endUser.getId());
 
         endUser.updateLastActive(LocalDateTime.now());
+        String newRefreshToken = jwtTokenProvider.CreateRefreshToken(email);
+        this.redisUtilService.setDataExpire(email, newRefreshToken, refreshTime);
+        response.setHeader("Authorization", aToken);
+        Cookie newCookie = new Cookie("refresh_token", newRefreshToken);
+        newCookie.setPath("/");
+        newCookie.setMaxAge(60 * 60 * 24 * 14); // 14 day
+        newCookie.setSecure(true);  // 추후 https 구현시 true로
+        newCookie.setAttribute("SameSite", "None"); // 추후 같은 사이트에서만 실행할 수 있게 변경
+        newCookie.setHttpOnly(true);
+        newCookie.setDomain(AwsDomain);
 
+        response.addCookie(newCookie);
         addTokenAndCookieToResponse(response, refresh, AwsDomain);
         JwtDto jwtDto = new JwtDto(aToken);
         this.endUserRepository.save(endUser);
