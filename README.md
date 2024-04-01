@@ -33,7 +33,7 @@
 - 저장된 리프레시 토큰은 1번 사용되면 다시 재발급 + 재저장 됩니다.
 - 이미지 업로드를 위한 S3 업로드 서비스가 포함되어 있습니다.
 - 유저 프로필 관리 및 이메일 서비스도 함께 포함되어 있습니다.
-- Open API [링크](https://apis.pyre.live/auth-service/swagger-ui/index.html)
+- Swagger API [링크](https://apis.pyre.live/auth-service/swagger-ui/index.html)
 
 # 구현 중 이슈
 ## Jwt (refresh + access)에 관한 고민
