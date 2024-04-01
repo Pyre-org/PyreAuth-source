@@ -42,9 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken(request);
-        log.error("t-1");
         if (token != null) {
-            log.error("t0");
             if (jwtTokenProvider.validateToken(token, request)) {
                 try {
                     Authentication authentication = jwtTokenProvider.getAuthentication(token);
@@ -58,31 +56,6 @@ public class JwtFilter extends OncePerRequestFilter {
                     myCookie.setHttpOnly(true);
                     response.addCookie(myCookie);
                     response.setHeader("Authorization", null);
-                }
-            } else {
-                Cookie cookie = getCookie(request, "refresh_token");
-                String refreshToken = cookie == null ? null : cookie.getValue();
-
-                if (refreshToken != null) {
-                    log.error(refreshToken);
-                    if (jwtTokenProvider.validateToken(refreshToken, request)) {
-                        String refreshEmail = jwtTokenProvider.getEmail(refreshToken);
-                        if (redisUtilService.getData(refreshEmail) == null) {
-                            jwtExceptionHandler(response, "Refresh_Token Expired", HttpStatus.UNAUTHORIZED);
-                            return;
-                        }
-                        if (!redisUtilService.getData(refreshEmail).equals(refreshToken)) {
-                            jwtExceptionHandler(response, "Refresh_Token is not correct", HttpStatus.UNAUTHORIZED);
-                            return;
-                        }
-                        String newAccessToken = jwtTokenProvider.createAccessToken(refreshEmail);
-                        response.addHeader("Authorization", newAccessToken);
-                        Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                } else {
-                    jwtExceptionHandler(response, "Refresh_Token Expired", HttpStatus.UNAUTHORIZED);
-                    return;
                 }
             }
         }
